@@ -448,8 +448,10 @@ void BotController::UpdateEnemy(void)
     m_iNextEnemyScanTime = level.inttime + 100;
     m_bEnemyVisible      = false;
 
-    const float maxDistance =
-        Q_min(world->m_fAIVisionDistance, world->farplane_distance * 0.828f);
+    float maxDistance = world->m_fAIVisionDistance;
+    if (world->farplane_distance > 0.0f) {
+        maxDistance = Q_min(maxDistance, world->farplane_distance * 0.828f);
+    }
     const float maxDistanceSquared = maxDistance * maxDistance;
 
     if (m_pEnemy && IsValidEnemy(m_pEnemy)
