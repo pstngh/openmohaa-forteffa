@@ -1,6 +1,6 @@
 # Current State
 
-Reconciled: 2026-08-12
+Reconciled: 2026-08-18
 
 ## Active task
 
@@ -21,6 +21,9 @@ Complete; no code or deployment work is currently authorized.
   real-slot administration/bots, lean melee behavior, GameSpy reporting, a lean
   Linux server build, native rotation/announcements, spectator and name rules,
   SP-map FFA packages, and SP-map taunt audio.
+- `f50b269` adds a per-connection human rename limit: the first exact name
+  change is logged and allowed, while the second is logged and kicked. Bots are
+  exempt, map changes preserve the count, and reconnecting resets it.
 - Tracked server packages: `misc/server/zzz_m6l2a_ffa.pk3` and
   `misc/server/zzz_sp_ffa.pk3`.
 
@@ -34,6 +37,7 @@ Nothing until the user selects another development or operational task.
   game server.
 - The current server's binaries, config, five-bot state, PK3s, and taunt behavior
   are unverified.
+- Live-server behavior of the name-change limit is unverified.
 - Live stock-client testing of SP-map taunts is unrecorded.
 - Runtime rotation is operator-owned and not tracked in Git.
 
@@ -44,10 +48,14 @@ Nothing until the user selects another development or operational task.
 
 ## Verified
 
-- Implementation tip: `4838a21c4f304265efbb15172a3ee7bd9770d198`.
-- On 2026-08-12, GitHub had the same branch tip; it was 13 commits ahead of
-  `main` and zero behind.
-- Linux build and unit-test workflows for that tip passed on 2026-07-30.
+- Implementation tip: `f50b269239e2cf911038f39d4fca73ca5d9d50b6`.
+- On 2026-08-18, `pstngh/openmohaa-forteffa` `main` contained that implementation
+  tip.
+- The name-change policy passed a focused harness covering initial, identical,
+  non-name, first/second rename, reason, and bot cases. Debug `omohaaded` and
+  `game` targets built successfully; the dedicated-server startup smoke test
+  stopped at the expected missing proprietary game assets.
+- Linux build and unit-test workflows for `4838a21` passed on 2026-07-30.
 - `server_opm.cfg` and external `z_forteffa.pk3` are not tracked.
 - No earlier continuity/task system existed; source TODOs are not active tasks.
 
