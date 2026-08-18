@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../qcommon/bg_compat.h"
 
 static const unsigned int MAX_GAMESPY_IDS = (1 << 16);
+static const int MAX_NAME_CHANGES_PER_CONNECTION = 2;
 static unsigned int g_gamespyId = 1;
 
 static void SV_CloseDownload( client_t *cl );
@@ -645,7 +646,9 @@ gotnewcl:
 		newcl->gamespyId = ch->gamespyId;
 	}
 
-	SV_UserinfoChanged( newcl );
+	if ( !SV_UserinfoChanged( newcl ) ) {
+		return;
+	}
 
 	if (sv_netprofile->integer) {
 		SV_NET_UpdateClientNetProfileInfo(&newcl->netprofile, newcl->rate);
@@ -1526,7 +1529,7 @@ Pull specific info from a newly changed userinfo string
 into a more C friendly form.
 =================
 */
-void SV_UserinfoChanged( client_t *cl ) {
+qboolean SV_UserinfoChanged( client_t *cl ) {
 	char	*val;
 	char	*ip;
 	int		i;
@@ -1548,6 +1551,15 @@ void SV_UserinfoChanged( client_t *cl ) {
             SV_PrintfClient(cl - svs.clients, "is using this name\n");
         } else if (strcmp(oldname, cl->name)) {
             SV_PrintfClient(cl - svs.clients, "has changed name (old name was '%s')\n", oldname);
+
+            if (cl->netchan.remoteAddress.type != NA_BOT) {
+                cl->nameChangeCount++;
+
+                if (cl->nameChangeCount >= MAX_NAME_CHANGES_PER_CONNECTION) {
+                    SV_KickClientForReason(cl, "too many name changes", qfalse);
+                    return qfalse;
+                }
+            }
         }
     }
 
@@ -1629,11 +1641,14 @@ void SV_UserinfoChanged( client_t *cl ) {
 	else
 		len = strlen( ip ) + 4 + strlen( cl->userinfo );
 
-	if( len >= MAX_INFO_STRING )
+	if( len >= MAX_INFO_STRING ) {
 		SV_DropClient( cl, "userinfo string length exceeded" );
-	else
+		return qfalse;
+	} else {
 		Info_SetValueForKey( cl->userinfo, "ip", ip );
+	}
 
+	return qtrue;
 }
 
 
@@ -1645,7 +1660,10 @@ SV_UpdateUserinfo_f
 static void SV_UpdateUserinfo_f( client_t *cl ) {
 	Q_strncpyz( cl->userinfo, Cmd_Argv(1), sizeof(cl->userinfo) );
 
-	SV_UserinfoChanged( cl );
+	if ( !SV_UserinfoChanged( cl ) ) {
+		return;
+	}
+
 	// call prog code to allow overrides
 	ge->ClientUserinfoChanged( ( gentity_t * )SV_GentityNum( cl - svs.clients ), cl->userinfo );
 }
