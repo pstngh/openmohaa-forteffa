@@ -1,6 +1,6 @@
 # Current State
 
-Reconciled: 2026-08-18
+Reconciled: 2026-08-20
 
 ## Active task
 
@@ -24,6 +24,9 @@ Complete; no code or deployment work is currently authorized.
 - `f50b269` adds a per-connection human rename limit: the first exact name
   change is logged and allowed, while the second is logged and kicked. Bots are
   exempt, map changes preserve the count, and reconnecting resets it.
+- The current tip adds a shared log-only print path and routes only the
+  server-side client-name messages through it. Existing game-module contextual
+  console messages retain their prior behavior.
 - Tracked server packages: `misc/server/zzz_m6l2a_ffa.pk3` and
   `misc/server/zzz_sp_ffa.pk3`.
 
@@ -55,6 +58,10 @@ Nothing until the user selects another development or operational task.
   non-name, first/second rename, reason, and bot cases. Debug `omohaaded` and
   `game` targets built successfully; the dedicated-server startup smoke test
   stopped at the expected missing proprietary game assets.
+- The log-only update builds successfully for Debug `omohaaded` and `game`.
+  A debugger-driven runtime check against the real server binary verified that
+  log-only output appears in `qconsole.log` but not captured console output,
+  while ordinary output continues to appear in both.
 - Linux build and unit-test workflows for `4838a21` passed on 2026-07-30.
 - `server_opm.cfg` and external `z_forteffa.pk3` are not tracked.
 - No earlier continuity/task system existed; source TODOs are not active tasks.

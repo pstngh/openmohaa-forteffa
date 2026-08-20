@@ -460,6 +460,7 @@ void SV_MasterShutdown (void);
 int SV_RateMsec(client_t *client);
 
 void SV_PrintfClient(int clientNum, const char *fmt, ...);
+void SV_LogPrintfClient(int clientNum, const char *fmt, ...);
 void SV_BotConnect(int clientNum, const char *userinfo);
 const char *SV_GetClientStatusAddress(const client_t *cl, int *botPortIndex);
 

@@ -45,6 +45,8 @@ verify each claim directly before changing deployment or reporting success.
 ## D-007: Human name changes are limited per connection
 
 Allow one exact name change for a human client, then log and kick on the second
-with `too many name changes`. Do not count the initial name, identical userinfo
-updates, non-name updates, or bots. Preserve the count across map changes but
-reset it on reconnect, and stop game-side userinfo handling after the kick.
+with `too many name changes`. Record client-name messages in `qconsole.log`
+without echoing them to the live console. Do not count the initial name,
+identical userinfo updates, non-name updates, or bots. Preserve the count across
+map changes but reset it on reconnect, and stop game-side userinfo handling
+after the kick.

@@ -1548,9 +1548,9 @@ qboolean SV_UserinfoChanged( client_t *cl ) {
     //
     if (cl->state != CS_FREE) {
         if (!oldname[0]) {
-            SV_PrintfClient(cl - svs.clients, "is using this name\n");
+            SV_LogPrintfClient(cl - svs.clients, "is using this name\n");
         } else if (strcmp(oldname, cl->name)) {
-            SV_PrintfClient(cl - svs.clients, "has changed name (old name was '%s')\n", oldname);
+            SV_LogPrintfClient(cl - svs.clients, "has changed name (old name was '%s')\n", oldname);
 
             if (cl->netchan.remoteAddress.type != NA_BOT) {
                 cl->nameChangeCount++;
